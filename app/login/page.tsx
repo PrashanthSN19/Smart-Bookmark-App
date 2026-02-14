@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Bookmark, Sparkles, Zap, Layers, Command } from 'lucide-react'
 
 export default function LoginPage() {
     const [loading, setLoading] = useState(false)
@@ -23,52 +25,101 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen w-full font-sans">
-            {/* Left Side - Branding */}
-            <div className="hidden w-1/2 flex-col justify-center items-center bg-gradient-to-br from-blue-600 to-indigo-800 p-12 text-white relative overflow-hidden lg:flex">
-                {/* Decorative Background Shapes */}
-                <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
-
-                <div className="relative z-10 text-center max-w-lg">
-                    <h1 className="text-6xl font-extrabold tracking-tight mb-4 drop-shadow-sm">Abstrabit</h1>
-                    <p className="text-2xl font-light mb-8 text-blue-100 tracking-wide">Your Smart Bookmark Companion</p>
-                    <p className="text-lg text-blue-200 leading-relaxed font-light">
-                        Save, manage, and access your bookmarks securely from anywhere.
-                        Experience a new way to organize your digital life.
-                    </p>
-                </div>
+        <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-slate-900 text-slate-100 font-sans selection:bg-indigo-500/30">
+            {/* Animated Background Mesh */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-indigo-600/30 to-purple-600/30 blur-[100px] animate-pulse" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-blue-600/30 to-cyan-600/30 blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+                <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] rounded-full bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 blur-[80px] animate-pulse" style={{ animationDelay: '4s' }} />
             </div>
 
-            {/* Right Side - Login Form */}
-            <div className="flex w-full items-center justify-center bg-white p-8 lg:w-1/2">
-                <div className="w-full max-w-md space-y-10">
-                    <div className="text-center">
-                        <h2 className="text-4xl font-bold tracking-tight text-gray-900">
-                            Welcome Back
-                        </h2>
-                        <p className="mt-3 text-base text-gray-500">
-                            Login using your Google account to continue
-                        </p>
+            {/* Floating Particles/Shapes */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <FloatingIcon Icon={Bookmark} className="top-[15%] left-[10%] text-indigo-400/20" size={48} delay={0} />
+                <FloatingIcon Icon={Zap} className="top-[60%] left-[8%] text-blue-400/20" size={32} delay={2} />
+                <FloatingIcon Icon={Sparkles} className="top-[25%] right-[10%] text-purple-400/20" size={40} delay={1} />
+                <FloatingIcon Icon={Layers} className="bottom-[15%] right-[15%] text-cyan-400/20" size={36} delay={3} />
+                <FloatingIcon Icon={Command} className="bottom-[10%] left-[20%] text-violet-400/20" size={28} delay={4} />
+            </div>
+
+            {/* Main Glassmorphism Card */}
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative z-10 w-full max-w-5xl h-auto min-h-[600px] mx-4 flex flex-col lg:flex-row overflow-hidden rounded-[2.5rem] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl"
+            >
+                {/* Left Side - Brand & Value Prop */}
+                <div className="w-full lg:w-1/2 p-12 lg:p-16 flex flex-col justify-between relative overflow-hidden group">
+                    {/* Subtle inner gradient highlight */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    
+                    <div className="relative z-10">
+                        <motion.div 
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3, duration: 0.6 }}
+                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium tracking-wider text-indigo-200 uppercase mb-8"
+                        >
+                            <Sparkles size={14} className="text-indigo-400" />
+                            Next Gen Bookmarking
+                        </motion.div>
+                        
+                        <motion.h1 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5, duration: 0.6 }}
+                            className="text-5xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-400 drop-shadow-sm"
+                        >
+                            Abstrabit
+                        </motion.h1>
+                        
+                        <motion.p 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.7, duration: 0.6 }}
+                            className="text-lg lg:text-xl text-slate-300 font-light leading-relaxed max-w-sm"
+                        >
+                            Your cognitive web companion. Capture, organize, and recall the internet with elegant simplicity.
+                        </motion.p>
                     </div>
 
-                    <div className="mt-8">
-                        <button
-                            onClick={handleLogin}
-                            disabled={loading}
-                            className="group relative flex w-full items-center justify-center gap-3 rounded-full bg-white border border-gray-200 px-8 py-4 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 hover:shadow-md hover:border-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    <div className="relative z-10 space-y-4 hidden lg:block">
+                        <FeatureItem text="Smart tagging & organization" delay={0.9} />
+                        <FeatureItem text="Instant search retrieval" delay={1.1} />
+                        <FeatureItem text="Distraction-free reading mode" delay={1.3} />
+                    </div>
+                </div>
+
+                {/* Right Side - Authentication */}
+                <div className="w-full lg:w-1/2 p-12 lg:p-16 bg-gradient-to-br from-white/5 to-white/0 flex flex-col justify-center items-center relative border-t lg:border-t-0 lg:border-l border-white/5">
+                   <div className="w-full max-w-sm space-y-8">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8, duration: 0.6 }}
+                            className="text-center"
                         >
-                            {loading ? (
-                                <>
-                                    <svg className="h-5 w-5 animate-spin text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span>Connecting...</span>
-                                </>
-                            ) : (
-                                <>
-                                    {/* Google Standard Icon */}
+                             <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-6">
+                                <Bookmark className="text-white w-8 h-8" />
+                             </div>
+                            <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+                            <p className="text-slate-400 text-sm">Sign in to access your digital brain</p>
+                        </motion.div>
+
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.0, duration: 0.6 }}
+                        >
+                            <button
+                                onClick={handleLogin}
+                                disabled={loading}
+                                className="group relative w-full flex items-center justify-center gap-3 px-8 py-4 bg-white text-slate-900 rounded-xl font-semibold text-lg hover:bg-indigo-50 transition-all duration-300 shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                {loading ? (
+                                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
+                                ) : (
                                     <svg className="h-6 w-6" viewBox="0 0 24 24">
                                         <path
                                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -87,17 +138,59 @@ export default function LoginPage() {
                                             fill="#EA4335"
                                         />
                                     </svg>
-                                    <span>Continue with Google</span>
-                                </>
-                            )}
-                        </button>
-                    </div>
-
-                    <div className="pt-8 text-center text-xs text-gray-400">
-                        &copy; {new Date().getFullYear()} Abstrabit Inc. All rights reserved.
-                    </div>
+                                )}
+                                <span>Continue with Google</span>
+                            </button>
+                            
+                            <p className="mt-6 text-center text-xs text-slate-500 font-medium">
+                                By continuing, you agree to our Terms of Service and Privacy Policy.
+                            </p>
+                        </motion.div>
+                   </div>
                 </div>
+            </motion.div>
+            
+            {/* Footer / Copyright */}
+            <div className="absolute bottom-6 w-full text-center text-xs text-slate-600 z-10 font-medium">
+                &copy; {new Date().getFullYear()} Abstrabit Inc. All rights reserved.
             </div>
         </div>
+    )
+}
+
+// Subcomponents for cleaner code
+
+function FloatingIcon({ Icon, className, size, delay }: { Icon: any, className: string, size: number, delay: number }) {
+    return (
+        <motion.div
+            className={`absolute ${className}`}
+            animate={{ 
+                y: [0, -15, 0],
+                opacity: [0.3, 0.6, 0.3],
+                rotate: [0, 5, -5, 0]
+             }}
+            transition={{ 
+                duration: 6, 
+                repeat: Infinity, 
+                ease: "easeInOut",
+                delay: delay 
+            }}
+        >
+            <Icon size={size} />
+        </motion.div>
+    )
+}
+
+function FeatureItem({ text, delay }: { text: string, delay: number }) {
+    return (
+        <motion.div 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay, duration: 0.5 }}
+            className="flex items-center gap-3 text-slate-400 group/item hover:text-indigo-300 transition-colors duration-300 cursor-default"
+        >
+            <div className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover/item:bg-indigo-400 transition-colors duration-300" />
+            <span className="text-sm tracking-wide">{text}</span>
+        </motion.div>
     )
 }
