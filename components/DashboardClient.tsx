@@ -17,7 +17,13 @@ type Bookmark = {
 
 export default function DashboardClient({ user, initialBookmarks }: { user: User, initialBookmarks: Bookmark[] }) {
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks)
+    const [searchQuery, setSearchQuery] = useState('')
     const supabase = createClient()
+
+    // Derived state for filtered bookmarks
+    const filteredBookmarks = bookmarks.filter(bookmark =>
+        bookmark.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
 
     useEffect(() => {
         const channel = supabase
@@ -114,18 +120,62 @@ export default function DashboardClient({ user, initialBookmarks }: { user: User
 
                     {/* Right Column: Bookmarks List */}
                     <div className="lg:col-span-8">
-                        <div className="mb-6 flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                                </svg>
-                                Your Bookmarks
-                            </h2>
-                            <span className="px-3 py-1 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-full border border-indigo-100">
-                                {bookmarks.length} saved
-                            </span>
+                        <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-4 w-full sm:w-auto">
+                                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                    Your Bookmarks
+                                </h2>
+                                <span className="px-3 py-1 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-full border border-indigo-100">
+                                    {bookmarks.length} saved
+                                </span>
+                            </div>
+
+                            {/* Search Bar */}
+                            <div className="relative w-full sm:max-w-xs group">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full leading-5 bg-white/50 backdrop-blur-sm placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 sm:text-sm transition-all shadow-sm hover:shadow-md"
+                                    placeholder="Search bookmarks by title..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                        <BookmarkList bookmarks={bookmarks} onDelete={handleDeleteBookmark} />
+                        {filteredBookmarks.length === 0 && searchQuery ? (
+                            <div className="mt-8 text-center py-8">
+                                <p className="text-gray-500">No bookmarks found matching "{searchQuery}"</p>
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                                >
+                                    Clear search
+                                </button>
+                            </div>
+                        ) : (
+                            <BookmarkList
+                                bookmarks={filteredBookmarks}
+                                onDelete={handleDeleteBookmark}
+                                searchQuery={searchQuery}
+                            />
+                        )}
                     </div>
                 </div>
             </main>

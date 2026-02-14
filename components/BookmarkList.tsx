@@ -11,9 +11,22 @@ type Bookmark = {
     user_id: string
 }
 
-export default function BookmarkList({ bookmarks, onDelete }: { bookmarks: Bookmark[], onDelete: (id: string) => void }) {
+export default function BookmarkList({ bookmarks, onDelete, searchQuery = '' }: { bookmarks: Bookmark[], onDelete: (id: string) => void, searchQuery?: string }) {
     const supabase = createClient()
     const [deletingId, setDeletingId] = useState<string | null>(null)
+
+    // Scroll to first match when search query changes
+    useEffect(() => {
+        if (!searchQuery) return
+
+        const firstMatch = bookmarks.find(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        if (firstMatch) {
+            const element = document.getElementById(`bookmark-${firstMatch.id}`)
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+        }
+    }, [searchQuery, bookmarks])
 
     const handleDeleteClick = (id: string) => {
         setDeletingId(id)
@@ -61,64 +74,74 @@ export default function BookmarkList({ bookmarks, onDelete }: { bookmarks: Bookm
     return (
         <>
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-                {bookmarks.map((bookmark) => (
-                    <div
-                        key={bookmark.id}
-                        className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/60 bg-white/60 backdrop-blur-md p-6 shadow-lg shadow-indigo-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-200/50 hover:bg-white/80"
-                    >
-                        <div className="absolute top-0 right-0 h-24 w-24 translate-x-12 -translate-y-12 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 opacity-50 blur-2xl transition-all group-hover:opacity-100"></div>
+                {bookmarks.map((bookmark) => {
+                    const isMatch = searchQuery && bookmark.title.toLowerCase().includes(searchQuery.toLowerCase())
 
-                        <div className="relative z-10">
-                            <div className="mb-4 flex items-start justify-between">
-                                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition-colors group-hover:bg-indigo-100 group-hover:text-indigo-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                                    </svg>
+                    return (
+                        <div
+                            key={bookmark.id}
+                            id={`bookmark-${bookmark.id}`}
+                            className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-white/60 backdrop-blur-md p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white/80
+                            ${isMatch
+                                    ? 'border-indigo-400 shadow-indigo-300/50 ring-2 ring-indigo-400/30 scale-[1.02] bg-indigo-50/50'
+                                    : 'border-white/60 shadow-indigo-100/50 hover:shadow-indigo-200/50'
+                                }
+                        `}
+                        >
+                            <div className="absolute top-0 right-0 h-24 w-24 translate-x-12 -translate-y-12 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 opacity-50 blur-2xl transition-all group-hover:opacity-100"></div>
+
+                            <div className="relative z-10">
+                                <div className="mb-4 flex items-start justify-between">
+                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition-colors group-hover:bg-indigo-100 group-hover:text-indigo-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                        </svg>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDeleteClick(bookmark.id)}
+                                        className="rounded-full p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus:outline-none"
+                                        title="Delete Bookmark"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteClick(bookmark.id)}
-                                    className="rounded-full p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus:outline-none"
-                                    title="Delete Bookmark"
+
+                                <h4 className="text-lg font-bold text-gray-900 line-clamp-1" title={bookmark.title}>
+                                    {bookmark.title}
+                                </h4>
+
+                                <a
+                                    href={bookmark.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-1 block text-sm text-gray-500 hover:text-indigo-600 hover:underline line-clamp-1 transition-colors"
+                                    title={bookmark.url}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
+                                    {bookmark.url}
+                                </a>
                             </div>
 
-                            <h4 className="text-lg font-bold text-gray-900 line-clamp-1" title={bookmark.title}>
-                                {bookmark.title}
-                            </h4>
-
-                            <a
-                                href={bookmark.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="mt-1 block text-sm text-gray-500 hover:text-indigo-600 hover:underline line-clamp-1 transition-colors"
-                                title={bookmark.url}
-                            >
-                                {bookmark.url}
-                            </a>
+                            <div className="relative z-10 mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                                <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md">
+                                    {new Date(bookmark.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                                <a
+                                    href={bookmark.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 group/link"
+                                >
+                                    Visit Site
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 transform transition-transform group-hover/link:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
-
-                        <div className="relative z-10 mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                            <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md">
-                                {new Date(bookmark.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </span>
-                            <a
-                                href={bookmark.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 group/link"
-                            >
-                                Visit Site
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 transform transition-transform group-hover/link:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
 
             {/* Delete Confirmation Modal */}
