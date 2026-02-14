@@ -6,7 +6,7 @@ Features Google OAuth authentication, private per-user bookmarks, and real-time 
 ## Features
 
 - **Google OAuth Authentication**: Secure login via Supabase Auth.
-- **Private Bookmarks**: Row Level Security (RLS) ensures data privacy.
+- **Private Bookmarks**: Row Level Security (rls) ensures data privacy.
 - **Real-time Updates**: Changes sync instantly across tabs/devices.
 - **Responsive UI**: Clean, mobile-friendly interface with Tailwind CSS.
 
